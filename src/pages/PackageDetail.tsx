@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { 
@@ -27,6 +26,7 @@ import {
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import DestinationCard from "@/components/ui/DestinationCard";
 
 const packageData = {
   id: 1,
@@ -173,7 +173,6 @@ const PackageDetail = () => {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [travelers, setTravelers] = useState(2);
 
-  // Calculate discounted price
   const discountedPrice = packageData.discount 
     ? packageData.price - (packageData.price * packageData.discount / 100)
     : packageData.price;
