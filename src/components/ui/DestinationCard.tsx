@@ -1,8 +1,8 @@
 
-import { useState } from "react";
+import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Heart, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface DestinationCardProps {
   id: number;
@@ -13,7 +13,7 @@ interface DestinationCardProps {
   price: number;
   description: string;
   tag?: string;
-  featured?: boolean;
+  className?: string;
 }
 
 const DestinationCard = ({
@@ -25,88 +25,76 @@ const DestinationCard = ({
   price,
   description,
   tag,
-  featured = false,
+  className,
 }: DestinationCardProps) => {
-  const [isFavorite, setIsFavorite] = useState(false);
-
   return (
-    <div 
-      className={cn(
-        "group relative bg-white rounded-xl overflow-hidden shadow-md transition-all duration-500",
-        featured ? "md:col-span-2" : "",
-        "hover:shadow-xl card-hover"
-      )}
-    >
-      {/* Image container */}
-      <div className="relative aspect-[4/3] overflow-hidden">
-        <img
-          src={image}
-          alt={name}
-          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-off-black/70"></div>
-        
-        {/* Tag */}
-        {tag && (
-          <span className="absolute top-4 left-4 bg-forest-green text-off-white px-3 py-1 text-xs font-medium rounded-full">
-            {tag}
-          </span>
-        )}
-        
-        {/* Favorite button */}
-        <button
-          onClick={() => setIsFavorite(!isFavorite)}
-          className="absolute top-4 right-4 bg-white/80 hover:bg-white p-2 rounded-full transition-colors"
-        >
-          <Heart
-            size={18}
-            className={cn(
-              "transition-colors",
-              isFavorite ? "fill-red-500 text-red-500" : "text-forest-green"
-            )}
+    <div className={cn("group overflow-hidden rounded-xl shadow-md transition-all duration-300 bg-white hover:shadow-lg", className)}>
+      <Link to={`/package/${id}`} className="block">
+        {/* Image container */}
+        <div className="relative h-48 overflow-hidden">
+          <img
+            src={image}
+            alt={name}
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
-        </button>
-        
-        {/* Location info */}
-        <div className="absolute bottom-4 left-4 text-white">
-          <h3 className="font-serif font-bold text-lg md:text-xl">{name}</h3>
-          <div className="flex items-center text-sm space-x-1">
-            <span>{location}</span>
+          
+          {/* Price tag */}
+          <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
+            <span className="font-medium text-forest-green">${price}</span>
+            <span className="text-muted-blue text-sm">/person</span>
           </div>
+          
+          {/* Featured tag */}
+          {tag && (
+            <div className="absolute top-4 left-4 bg-sand-gold/90 backdrop-blur-sm text-off-white text-sm px-3 py-1 rounded-full">
+              {tag}
+            </div>
+          )}
         </div>
-      </div>
-      
-      {/* Card content */}
-      <div className="p-4">
-        {/* Rating and price row */}
-        <div className="flex justify-between items-center mb-3">
-          <div className="flex items-center">
-            <Star className="h-4 w-4 text-sand-gold mr-1 fill-sand-gold" />
-            <span className="font-medium text-sm">{rating.toFixed(1)}</span>
-          </div>
-          <div className="text-right">
-            <span className="text-sm text-muted-blue">From</span>
-            <p className="font-bold text-forest-green">
-              ${price.toLocaleString()}
+        
+        {/* Content */}
+        <div className="p-4 space-y-3">
+          {/* Title and location */}
+          <div>
+            <h3 className="font-serif font-bold text-lg text-forest-green mb-1 group-hover:text-teal transition-colors">{name}</h3>
+            <p className="text-muted-blue text-sm flex items-center">
+              <span className="w-1 h-1 bg-muted-blue rounded-full inline-block mr-2"></span>
+              {location}
             </p>
           </div>
+          
+          {/* Rating */}
+          <div className="flex items-center">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                className={cn(
+                  "w-4 h-4 mr-1",
+                  i < Math.floor(rating)
+                    ? "text-sand-gold fill-sand-gold"
+                    : i < rating
+                    ? "text-sand-gold fill-sand-gold opacity-50"
+                    : "text-gray-300"
+                )}
+              />
+            ))}
+            <span className="text-muted-blue text-sm ml-1">{rating.toFixed(1)}</span>
+          </div>
+          
+          {/* Description */}
+          <p className="text-gray-600 text-sm line-clamp-2">{description}</p>
+          
+          {/* Action button */}
+          <div className="pt-2">
+            <Button
+              variant="outline"
+              className="w-full border-forest-green text-forest-green hover:bg-forest-green hover:text-white transition-colors"
+            >
+              View Details
+            </Button>
+          </div>
         </div>
-        
-        {/* Description */}
-        <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-          {description}
-        </p>
-        
-        {/* Action button */}
-        <div className="flex">
-          <Link
-            to={`/package/${id}`}
-            className="w-full text-center py-2 px-4 bg-cream hover:bg-sand-gold transition-colors text-forest-green font-medium text-sm rounded-md"
-          >
-            View Details
-          </Link>
-        </div>
-      </div>
+      </Link>
     </div>
   );
 };
