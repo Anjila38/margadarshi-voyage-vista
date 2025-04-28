@@ -118,9 +118,13 @@ const allSpecialties = Array.from(
   new Set(agencies.flatMap(agency => agency.specialties))
 ).sort();
 
-// All locations
+// All locations - Fixed to handle cases where location might not have a comma
 const allLocations = Array.from(
-  new Set(agencies.map(agency => agency.location.split(',')[1].trim()))
+  new Set(agencies.map(agency => {
+    const locationParts = agency.location.split(',');
+    // If there's a second part (country) after the comma, use it; otherwise use the whole string
+    return locationParts.length > 1 ? locationParts[1].trim() : agency.location.trim();
+  }))
 ).sort();
 
 const AgencyCard = ({ agency, viewMode }: { agency: typeof agencies[0], viewMode: "grid" | "list" }) => {
